@@ -1,0 +1,220 @@
+<template>
+	<view class="setPage">
+		<scroll-view scroll-y="true" class="content" :style="[{ height: height }]">
+			<text class="title" :style="[{ fontSize: rootFontSize * 0.85 }]">关键词列表</text>
+			<view class="keyword">
+				<view :class="['dv', long & (activeindex == index) ? 'cur' : 'curr']" v-for="(item, index) in list" :key="index">
+					<view class="wrap" v-if="activeindex != index">
+						<text class="word" :style="[{ fontSize: rootFontSize * 1.14 }]" @longpress="edit(index, item.keyId, item.keyContent)">{{ item.keyContent }}</text>
+						<view class="del" @click="del(item.keyId)"><image class="delImage" src="../../static/images/del.png" mode=""></image></view>
+					</view>
+					<view class="else" v-if="activeindex == index">
+						<input
+							v-model="editKey"
+							type="text"
+							focus
+							:clearable="false"
+							@input="change(editKey)"
+							@confirm="complete(editKey,item.keyId)"
+							border="none"
+							class="input"
+						/>
+						<view class="right">
+							<view @click.stop="conserve(item.keyId)">保存</view>
+							<view @click.stop="editClose()">取消</view>
+						</view>
+					</view>
+				</view>
+			</view>
+		</scroll-view>
+	</view>
+</template>
+
+<script>
+export default {
+	data() {
+		return {
+			height: 660,
+			list: [
+				{
+					keyId: 376,
+					userId: 251,
+					keyContent: "I'm from China",
+					createTime: '2022-01-04 14:15:20',
+					voList: null
+				},
+				{
+					keyId: 375,
+					userId: 251,
+					keyContent: "I'm sorry",
+					createTime: '2021-12-26 09:09:18',
+					voList: null
+				},
+				{
+					keyId: 343,
+					userId: 251,
+					keyContent: '菜鸟职业选手',
+					createTime: '2021-11-05 13:19:35',
+					voList: null
+				},
+				{
+					keyId: 340,
+					userId: 251,
+					keyContent: '锂电池',
+					createTime: '2021-10-28 13:19:48',
+					voList: null
+				},
+				{
+					keyId: 339,
+					userId: 251,
+					keyContent: 'nature',
+					createTime: '2021-10-28 13:19:28',
+					voList: null
+				},
+				{
+					keyId: 338,
+					userId: 251,
+					keyContent: 'a',
+					createTime: '2021-10-28 13:18:37',
+					voList: null
+				},
+				{
+					keyId: 337,
+					userId: 251,
+					keyContent: 'science',
+					createTime: '2021-10-27 14:27:02',
+					voList: null
+				},
+				{
+					keyId: 336,
+					userId: 251,
+					keyContent: 'Carbon neutral',
+					createTime: '2021-10-20 10:57:56',
+					voList: null
+				},
+				{
+					keyId: 260,
+					userId: 251,
+					keyContent: 'Peptide nucleic Acid',
+					createTime: '2021-09-16 13:32:20',
+					voList: null
+				},
+				{
+					keyId: 261,
+					userId: 251,
+					keyContent: 'Zika Virus Infection',
+					createTime: '2021-09-16 13:32:20',
+					voList: null
+				},
+				{
+					keyId: 262,
+					userId: 251,
+					keyContent: 'Coxsackie Virus Infection',
+					createTime: '2021-09-16 13:32:20',
+					voList: null
+				},
+				{
+					keyId: 263,
+					userId: 251,
+					keyContent: 'Severe Acute Respiratory Syndrome',
+					createTime: '2021-09-16 13:32:20',
+					voList: null
+				},
+				{
+					keyId: 264,
+					userId: 251,
+					keyContent: 'Middle East Respiratory Syndrome Coronavirus',
+					createTime: '2021-09-16 13:32:20',
+					voList: null
+				}
+			],
+			is_add: true,
+			rootFontSize: 15, //字体大小 默认15
+			delID: 0, //关键词id
+			activeindex: -1,
+			editKey:"",//编辑框的值
+			copyKey:''//编辑框的值 深复制
+		};
+	},
+	onLoad() {
+		this.initFullScreen(); //获取屏幕信息
+	},
+	onShow() {
+	},
+	methods: {
+		//软键盘右下角确定按钮
+		complete(val,id){
+			console.log(val,id);
+			this.list.forEach((item)=>{
+				if(item.keyId == id){
+					item.keyContent = val
+					this.activeindex = -1
+					this.keyId = ''
+					this.editKey = ''
+				}
+			})
+		},
+		// 编辑框值发生变化时触发
+		change(val){
+			console.log(val);
+			this.editKey = val
+		},
+		// 编辑框保存
+		conserve(id){
+			console.log(id);
+			this.list.forEach((item)=>{
+				if(item.keyId == id){
+					item.keyContent = this.editKey
+					this.activeindex = -1
+					this.keyId = ''
+					this.editKey = ''
+				}
+			})
+		},
+		// 编辑状态取消
+		editClose() {
+			this.activeindex = -1;
+			this.editKey = '';
+			this.keyId = '';
+			// #ifdef APP-PLUS
+			plus.key.hideSoftKeybord()
+			// #endif
+		},
+		// 长按进入编辑状态
+		edit(index, id, val) {
+			console.log(index, id, val);
+			// 判断editkey .keyword是否为空
+			if (this.editKey) {
+				uni.showToast({
+					title: '请先保存',
+					icon: 'none'
+				});
+				return; //终止
+			} else {
+				// 保存activeindex,editKey keyId copyKey
+				this.activeindex = index;
+				this.editKey = val;
+				this.copyKey = val;
+				this.keyId = id;
+				// #ifdef APP-NVUE
+				plus.key.showSoftKeybord(); //显示软键盘
+				// #endif
+			}
+			this.initFullScreen(); //获取屏幕信息
+		},
+		// 获取屏幕信息
+		initFullScreen() {
+			uni.getSystemInfo({
+				success: res => {
+					console.log(res);
+					this.height = res.windowHeight;
+				}
+			});
+		}
+	}
+};
+</script>
+
+<style scoped>
+@import url('./setPage.css');
+</style>

@@ -1,0 +1,242 @@
+<template>
+	<div class="profile" :style="[{ height: height }]" @click="modify = false">
+		<text class="header_right_top" v-if="!modify" @click="modifyNickname($event)" :style="[{ fontSize: rootFontSize * 1.14 }]">{{ name }}</text>
+		<input
+			v-model="name"
+			type="text"
+			:style="[{ fontSize: rootFontSize }]"
+			confirm-type="done"
+			@confirm="done(name)"
+			:hold-keyboard="true"
+			class="input"
+			max-length="10"
+			v-if="modify"
+			focus
+		/>
+		<view class="content">
+			<view class="item" v-for="(item, index) in list" :key="index">
+				<image class="item_img" :src="item.icon" mode=""></image>
+				<view class="name" @click="jump(index, $event)">
+					<text :style="[{ fontSize: rootFontSize * 1.07 }]" class="first">{{ item.name }}</text>
+					<image class="name_right" src="../../static/images/profile_right_gray.png"></image>
+				</view>
+			</view>
+		</view>
+	</div>
+</template>
+
+<script>
+export default {
+	components: {},
+	data() {
+		return {
+			height: 0,
+			list: [
+				{
+					icon: '../../static/images/star.png',
+					name: '我的收藏'
+				},
+				{
+					icon: '../../static/images/dynamic.png',
+					name: '我的动态'
+				},
+				{
+					icon: '../../static/images/history.png',
+					name: '浏览历史'
+				},
+				{
+					icon: '../../static/images/set.png',
+					name: '字体大小'
+				},
+				{
+					icon: '../../static/images/ideaback.png',
+					name: '意见反馈'
+				}
+			],
+			rootFontSize: 15, //字体大小
+			name: '人间不值得',
+			modify: false
+		};
+	},
+	onLoad() {
+		this.initFullScreen();
+	},
+	onShow() {},
+	onHide() {
+		this.modify = false
+	},
+	methods: {
+		cancal() {
+			this.modify = false;
+			// #ifdef APP-PLUS
+			plus.key.hideSoftKeybord();
+			// #endif
+		},
+		// 保存昵称
+		async done(val) {
+			if (!this.modify) return;
+			if (val.trim() == '') {
+				uni.showToast({
+					title: '请输入昵称',
+					icon: 'none'
+				});
+			} else {
+			}
+		},
+		// 修改昵称
+		modifyNickname(e) {
+			this.modify = true;
+			plus.key.showSoftKeybord();
+			// #ifdef APP-NVUE
+			e.stopPropagation();
+			// #endif
+		},
+		initFullScreen() {
+			uni.getSystemInfo({
+				success: res => {
+					this.height = res.windowHeight;
+				}
+			});
+		},
+		// 跳转页面
+		jump(i) {
+			switch (i) {
+				case 0:
+					// 我的收藏
+
+					break;
+				case 1:
+					// 我的动态
+
+					break;
+				case 2:
+					// 我的历史
+
+					break;
+				case 3:
+					// 字体大小
+
+					break;
+				case 4:
+					// 意见反馈
+					uni.navigateTo({
+						url: '../ideaback/ideaback'
+					});
+					break;
+			}
+		}
+	}
+};
+</script>
+
+<style>
+.profile {
+	background-color: #ffffff;
+}
+.avatar {
+	padding-top: 60;
+	width: 750rpx;
+	justify-content: flex-start;
+	flex-direction: row;
+}
+.image {
+	width: 80rpx;
+	height: 80rpx;
+	border-radius: 40rpx;
+	margin-left: 32rpx;
+	background-color: #87ceeb;
+	text-align: center;
+	align-items: center;
+	text-overflow: clip;
+	lines: 1;
+	padding-top: 7.5;
+}
+.header_avatar_img {
+	width: 80rpx;
+	height: 80rpx;
+	border-radius: 40rpx;
+	margin-left: 32rpx;
+}
+.header_end {
+	align-items: center;
+	height: 36px;
+	margin-left: 44rpx;
+	flex-direction: row;
+}
+.profilePage {
+	padding-top: 10rpx;
+	color: #0f2128;
+}
+.profilePage-right {
+	margin-top: 15rpx;
+	width: 30rpx;
+	height: 30rpx;
+}
+
+.header_right {
+	width: 385rpx;
+	margin-left: 24rpx;
+}
+.header_right_top {
+	font-weight: 600;
+	width: 276rpx;
+	height: 48rpx;
+	text-overflow: ellipsis;
+	line-height: 48rpx;
+	background: #f5f6fa;
+	border-radius: 10rpx;
+}
+.input {
+	width: 360rpx;
+	height: 48rpx;
+	border-color: gray;
+	border-style: solid;
+	border-width: 2rpx;
+}
+.school {
+	width: 500rpx;
+	height: 36rpx;
+	color: #55759b;
+	font-weight: 500;
+	lines: 1;
+	text-overflow: ellipsis;
+}
+.content {
+	margin-top: 60rpx;
+}
+.item_img {
+	width: 40rpx;
+	height: 40rpx;
+}
+.item {
+	padding-left: 18;
+	height: 56px;
+	justify-content: flex-start;
+	flex-direction: row;
+	align-items: center;
+}
+.name {
+	height: 112rpx;
+	padding-left: 10;
+	justify-content: flex-start;
+	flex-direction: row;
+	align-items: center;
+	border-bottom-color: #f8f8f8;
+	border-bottom-style: solid;
+	border-bottom-width: 2rpx;
+}
+.first {
+	width: 550rpx;
+}
+.logout-btn {
+	margin-top: 30px;
+	width: 686rpx;
+	margin-left: 32rpx;
+}
+.name_right {
+	margin-top: 15rpx;
+	margin-left: 50rpx;
+	width: 30rpx;
+	height: 30rpx;
+}
+</style>
